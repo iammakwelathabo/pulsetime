@@ -190,7 +190,6 @@ function getF7() {
   return vm && vm.proxy && vm.proxy.$f7 ? vm.proxy.$f7 : null;
 }
 
-
 /* delete popup state */
 const deletePopupOpen = ref(false);
 const deleteTargetId = ref(null);
@@ -258,8 +257,6 @@ onBeforeUnmount(() => {
   document.removeEventListener('keydown', escHandler);
 });
 
-
-
 // safe wrappers to show dialogs (falls back to native alert/confirm)
 function showAlert(message, title) {
   const $f7 = getF7();
@@ -269,6 +266,7 @@ function showAlert(message, title) {
     window.alert(message);
   }
 }
+
 function showConfirm(message, cb) {
   const $f7 = getF7();
   if ($f7 && $f7.dialog && typeof $f7.dialog.confirm === 'function') {
@@ -277,6 +275,7 @@ function showConfirm(message, cb) {
     if (window.confirm(message)) cb();
   }
 }
+
 function closePopupSafe() {
   const $f7 = getF7();
   if ($f7 && $f7.popup && typeof $f7.popup.close === 'function') {
@@ -584,8 +583,6 @@ async function savePresets() {
   function openRate() {
     console.log('open rate');
   }
-
-
 
   /* ---------- computed / watchers ---------- */
   const selectedPreset = computed(() => presets.value.find(p => p.id === selectedPresetId.value) || presets.value[0] || null);

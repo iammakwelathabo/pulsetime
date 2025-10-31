@@ -87,21 +87,35 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 
+const alarmSound = new Audio('assets/sounds/alarm.wav');
+
+const TIMER_STATE = {
+  WORK: 'work',
+  SHORT_BREAK: 'shortBreak',
+  LONG_BREAK: 'longBreak'
+};
+
+const currentTimerState = ref(TIMER_STATE.WORK);
+
 /* ---------- Storage key (must match Settings.vue) ---------- */
 const STORAGE_KEY = 'pomodoro_presets_v1';
 
 /* ---------- Reactive timer state ---------- */
 const presets = ref([]);
 const selectedPresetId = ref(null);
-const selectedPreset = computed(() => presets.value.find(p => p.id === selectedPresetId.value) || (presets.value[0] ?? null));
+//const selectedPreset = computed(() => presets.value.find(p => p.id === selectedPresetId.value) || (presets.value[0] ?? null));
 
-const currentTotalTime = ref(25 * 60); // seconds for current preset (work interval)
-const timeLeft = ref(currentTotalTime.value);
-const isRunning = ref(false);
+const currentTotalTime = ref(25 * 60);
 const intervalRef = ref(null);
-
-/* cycles / session tracking (simple) */
+const isRunning = ref(false);
+const timeLeft = ref(0);
 const currentCycle = ref(1);
+const selectedPreset = ref({
+  workInterval: 25,
+  cycles: 4,
+  autoStart: true,
+});
+
 
 /* svg circle math */
 const circumference = 2 * Math.PI * 100;
@@ -117,6 +131,20 @@ const formattedTime = computed(() => {
   const s = (timeLeft.value % 60).toString().padStart(2, '0');
   return `${m}:${s}`;
 });
+
+function getDurationForState(state) {
+  if (!selectedPreset.value) return 25 * 60;
+  switch (state) {
+    case TIMER_STATE.WORK:
+      return (selectedPreset.value.workInterval ?? 25) * 60;
+    case TIMER_STATE.SHORT_BREAK:
+      return (selectedPreset.value.shortBreak ?? 5) * 60;
+    case TIMER_STATE.LONG_BREAK:
+      return (selectedPreset.value.longBreak ?? 15) * 60;
+    default:
+      return 25 * 60;
+  }
+}
 
 /* ---------- Storage helpers (NativeStorage + localStorage fallback) ---------- */
 function hasNativeStorage() {
@@ -209,27 +237,71 @@ async function saveSelected() {
 
 /* ---------- Timer controls ---------- */
 function startTimer() {
+  if (!selectedPreset.value) return;
+
+  // If timer already finished, ensure proper duration
+  if (!timeLeft.value || timeLeft.value <= 0) {
+    timeLeft.value = getDurationForState(currentTimerState.value);
+  }
+
   if (intervalRef.value) clearInterval(intervalRef.value);
   isRunning.value = true;
+
   intervalRef.value = setInterval(() => {
     if (timeLeft.value > 0) {
       timeLeft.value--;
     } else {
-      // timer reached zero - stop and increment cycle
+      // Timer finished
       clearInterval(intervalRef.value);
       intervalRef.value = null;
       isRunning.value = false;
-      currentCycle.value = Math.min((selectedPreset?.cycles ?? 4), currentCycle.value + 1);
-      // if autoStart on preset, start next automatically (not implemented: break timers)
+
+      // Play alarm
+      alarmSound.currentTime = 0;
+      alarmSound.play().catch(err => console.warn('Audio play failed', err));
+
+      // Handle next state
+      if (currentTimerState.value === TIMER_STATE.WORK) {
+        // Work finished → increment cycle
+        currentCycle.value++;
+
+        if (currentCycle.value % selectedPreset.value.cycles === 0) {
+          // Long break
+          if (selectedPreset.value.longBreak > 0) {
+            currentTimerState.value = TIMER_STATE.LONG_BREAK;
+            if (selectedPreset.value.autoStart) {
+              timeLeft.value = getDurationForState(TIMER_STATE.LONG_BREAK);
+              startTimer();
+            }
+          } else {
+            // No break configured → stop indefinitely
+            currentTimerState.value = TIMER_STATE.WORK;
+          }
+        } else {
+          // Short break
+          if (selectedPreset.value.shortBreak > 0) {
+            currentTimerState.value = TIMER_STATE.SHORT_BREAK;
+            if (selectedPreset.value.autoStart) {
+              timeLeft.value = getDurationForState(TIMER_STATE.SHORT_BREAK);
+              startTimer();
+            }
+          } else {
+            currentTimerState.value = TIMER_STATE.WORK;
+          }
+        }
+      } else {
+        // Break finished → go back to work
+        currentTimerState.value = TIMER_STATE.WORK;
+        timeLeft.value = getDurationForState(TIMER_STATE.WORK);
+        if (selectedPreset.value.autoStart) startTimer();
+      }
     }
   }, 1000);
 }
 
 function pauseTimer() {
-  if (intervalRef.value) {
-    clearInterval(intervalRef.value);
-    intervalRef.value = null;
-  }
+  if (intervalRef.value) clearInterval(intervalRef.value);
+  intervalRef.value = null;
   isRunning.value = false;
 }
 
@@ -243,37 +315,44 @@ function toggleTimer() {
 
 function stopTimer() {
   pauseTimer();
-  // reset cycle as user stopped
   currentCycle.value = 1;
-  timeLeft.value = currentTotalTime.value;
+  currentTimerState.value = TIMER_STATE.WORK;
+  timeLeft.value = getDurationForState(TIMER_STATE.WORK);
 }
 
 function resetTimer() {
   pauseTimer();
-  timeLeft.value = currentTotalTime.value;
+  timeLeft.value = getDurationForState(currentTimerState.value);
 }
 
 /* choose preset from home - stop timer and set new duration */
 function choosePreset(id) {
-  const found = presets.value.find(p => p.id === id);
-  if (!found) return;
+  if (selectedPresetId.value === id) return; // same preset, do nothing
   selectedPresetId.value = id;
-  applySelectedPreset(true); // reset timer to new preset duration, stop timer
+  applySelectedPreset(true); // stop timer and reset duration
   saveSelected();
 }
 
 /* apply selected preset values to timer; if keepRunning false we pause timer */
+/* ---------- apply selected preset correctly ---------- */
 function applySelectedPreset(pause = true) {
-  const p = selectedPreset.value;
+  // find preset object
+  const p = presets.value.find(p => p.id === selectedPresetId.value);
   if (!p) return;
+
+  // update reactive ref
+  selectedPreset.value = p;
+
+  // set timer to full duration of work interval
   currentTotalTime.value = (p.workInterval ?? 25) * 60;
-  // update timeLeft to full duration when switching
   timeLeft.value = currentTotalTime.value;
-  if (pause) {
-    pauseTimer();
-  }
+
+  // pause timer if needed
+  if (pause) pauseTimer();
+
   currentCycle.value = 1;
 }
+
 let presetsChangedHandler = null;
 /* ---------- lifecycle ---------- */
 onMounted(async () => {
