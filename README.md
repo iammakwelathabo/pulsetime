@@ -1,29 +1,30 @@
 # PulseTime
 
-## Framework7 CLI Options
+A modern productivity timer app built with **Framework7**, **Vue.js**, and **Apache Cordova**.  
+The app helps users manage focused study or work sessions using customizable time intervals and local data storage — perfect for staying on track and improving focus.
 
-Framework7 app created with following options:
+---
 
-```
-{
-  "cwd": "C:\\xampp\\htdocs\\PulseTime",
-  "type": [
-    "web"
-  ],
-  "name": "PulseTime",
-  "framework": "vue",
-  "template": "blank",
-  "cssPreProcessor": false,
-  "bundler": "vite",
-  "theming": {
-    "customColor": false,
-    "color": "#007aff",
-    "darkMode": false,
-    "iconFonts": true
-  },
-  "customBuild": false
-}
-```
+##  Tech Stack
+
+- **Framework7** — mobile UI framework for building hybrid apps with a native look
+- **Vue.js** — reactive front-end framework used for app logic and state management
+- **Cordova** — for building and deploying the app to Android/iOS
+- **Cordova Local Storage Plugin** — to store user data, presets, and session history locally on the device
+- **JavaScript (ES6+)**
+
+---
+
+##  Features
+
+-  Create, edit, and delete **custom study/work presets**
+-  Manage **focus and break intervals** easily
+-  Offline storage** using Cordova Local Storage plugin
+-  Optional sound/vibration alerts when a session ends
+-  Real-time updates and progress tracking
+-  Works as a Cordova app
+
+---
 
 ## Install Dependencies
 
@@ -34,9 +35,9 @@ npm install
 
 ## NPM Scripts
 
-* 🔥 `start` - run development server
-* 🔧 `dev` - run development server
-* 🔧 `build` - build web app for production
+*  `start` - run development server
+*  `dev` - run development server
+*  `build` - build web app for production
 
 ## Vite
 
@@ -55,8 +56,6 @@ Or launch UI where you will be able to change icons and splash screens:
 framework7 assets --ui
 ```
 
-
-
 ## Documentation & Resources
 
 * [Framework7 Core Documentation](https://framework7.io/docs/)
@@ -71,3 +70,13 @@ framework7 assets --ui
 Love Framework7? Support project by donating or pledging on:
 - Patreon: https://patreon.com/framework7
 - OpenCollective: https://opencollective.com/framework7
+
+- Preview
+
+  <img width="720" height="1600" alt="Screenshot_20251031-112109" src="https://github.com/user-attachments/assets/80e5df74-3401-466b-871e-85173f5c5e44" />
+  
+  <img width="720" height="1600" alt="Screenshot_20251031-112150" src="https://github.com/user-attachments/assets/43b09d76-2460-4ea6-ba9b-826acece524d" />
+
+<img width="720" height="1600" alt="Screenshot_20251031-112142" src="https://github.com/user-attachments/assets/ac22b95e-9386-474d-bb4f-b6b4b5297dbd" />
+
+<img width="720" height="1600" alt="Screenshot_20251031-112135" src="https://github.com/user-attachments/assets/cf9baa07-ee5c-4240-8ef1-6c64968faad6" />
