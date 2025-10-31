@@ -1,0 +1,18 @@
+{
+  "cwd": "C:\\xampp\\htdocs\\PulseTime",
+  "type": [
+    "web"
+  ],
+  "name": "PulseTime",
+  "framework": "vue",
+  "template": "blank",
+  "cssPreProcessor": false,
+  "bundler": "vite",
+  "theming": {
+    "customColor": false,
+    "color": "#007aff",
+    "darkMode": false,
+    "iconFonts": true
+  },
+  "customBuild": false
+}

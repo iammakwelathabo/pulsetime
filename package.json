@@ -1,0 +1,41 @@
+{
+  "name": "pulsetime",
+  "private": true,
+  "version": "1.0.0",
+  "description": "PulseTime",
+  "repository": "",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "cross-env NODE_ENV=development vite",
+    "build": "cross-env NODE_ENV=production vite build",
+    "postinstall": "cpy --flat ./node_modules/framework7-icons/fonts/*.* ./src/fonts/ && cpy --flat ./node_modules/material-icons/iconfont/*.* ./src/fonts/"
+  },
+  "browserslist": [
+    "IOS >= 15",
+    "Safari >= 15",
+    "last 5 Chrome versions",
+    "last 5 Firefox versions"
+  ],
+  "dependencies": {
+    "dom7": "^4.0.6",
+    "framework7": "^8.3.4",
+    "framework7-icons": "^5.0.5",
+    "framework7-vue": "^8.3.4",
+    "material-icons": "^1.13.14",
+    "skeleton-elements": "^4.0.1",
+    "swiper": "^12.0.3",
+    "vue": "^3.5.22"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/compiler-sfc": "^3.5.22",
+    "autoprefixer": "^10.4.21",
+    "cpy-cli": "^6.0.0",
+    "cross-env": "^10.1.0",
+    "postcss": "^8.5.6",
+    "postcss-preset-env": "^10.4.0",
+    "tailwindcss": "^4.1.16",
+    "vite": "^7.1.12"
+  }
+}

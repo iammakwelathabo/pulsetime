@@ -1,0 +1,26 @@
+:root {
+    /* === Base theme (system default = light) === */
+    --color-bg: #ffffff;
+    --color-text: #111111;
+    --color-card: #f1f1f1;
+    --color-accent: #14b8a6;
+    --color-muted: #888888;
+}
+
+/* === Dark theme === */
+[data-theme='dark'] {
+    --color-bg: #1b1c28;
+    --color-text: #ffffff;
+    --color-card: #2c2d3c;
+    --color-accent: #14b8a6;
+    --color-muted: #9ca3af;
+}
+
+/* === Light theme (explicit) === */
+[data-theme='light'] {
+    --color-bg: #ffffff;
+    --color-text: #111111;
+    --color-card: #f1f1f1;
+    --color-accent: #14b8a6;
+    --color-muted: #888888;
+}

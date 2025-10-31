@@ -1,0 +1,58 @@
+# macOS
+.DS_Store
+
+# Node dependencies
+node_modules/
+
+# Cordova build folders
+/platforms/
+/plugins/
+
+# Framework7 build output (depending on your build setup)
+www/
+dist/
+build/
+
+# If using Framework7 Vite setup or bundler
+.vite/
+.cache/
+.temp/
+*.log
+
+# Environment and local config files
+.env
+.env.local
+.env.*.local
+
+# OS and IDE files
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# Cordova config artifacts
+config.xml.bak
+config.xml.orig
+
+# Android / iOS build outputs
+*.keystore
+*.jks
+app-release.aab
+app-release.apk
+app-debug.apk
+android/app/build/
+ios/build/
+ios/platforms/
+
+# NPM / Yarn / PNPM lock files (optional — if you don’t want to commit them)
+# package-lock.json
+# yarn.lock
+
+# Optional: Generated assets
+resources/android/
+resources/ios/
+
+# Logs and reports
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
